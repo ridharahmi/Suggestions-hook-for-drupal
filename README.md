@@ -272,7 +272,7 @@ function suggestions_theme_suggestions_select_alter(array &$suggestions, array $
 }
 ```
 
-### Suggestions paragraph
+### Suggestions Suggestions
 ```
 /**
  * @param array $suggestions
