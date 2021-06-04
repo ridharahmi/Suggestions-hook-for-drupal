@@ -240,3 +240,51 @@ function suggestions_theme_suggestions_views_view_unformatted_alter(array &$sugg
     }
 }
 ```
+
+### Suggestions field radios
+```
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function suggestions_theme_suggestions_radios_alter(array &$suggestions, array $variables, $hook)
+{
+    if (isset($variables['element']['#id'])) {
+        $id = str_replace("-", "_", $variables['element']['#id']);
+        $suggestions[] = $hook . '__' . $id;
+    }
+}
+```
+### Suggestions field select
+```
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function suggestions_theme_suggestions_select_alter(array &$suggestions, array $variables, $hook)
+{
+    if (isset($variables['element']['#id'])) {
+        $id = str_replace("-", "_", $variables['element']['#id']);
+        $suggestions[] = $hook . '__' . $id;
+    }
+}
+```
+
+### Suggestions paragraph
+```
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function suggestions_theme_suggestions_paragraph_alter(array &$suggestions, array &$variables, $hook)
+{
+    $paragraph = $variables['elements']['#paragraph'];
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if (!empty($node)) {
+        $suggestions[] = $hook . '__' . $paragraph->bundle() . '__' . $node->getType() . '__' . $node->id();
+    }
+}
+```
