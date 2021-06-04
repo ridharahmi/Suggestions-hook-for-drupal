@@ -38,7 +38,7 @@ function suggestions_theme_suggestions_input_alter(array &$suggestions, array $v
 {
     if (isset($variables['element']['#id'])) {
         //if (strpos($variables['element']['#id'], 'edit-field-exemple-') === 0) {
-           // $suggestions[] = $hook .'__' .  $variables['element']['#type'].'__' . 'exemple';
+        // $suggestions[] = $hook .'__' .  $variables['element']['#type'].'__' . 'exemple';
         //}
         $id = str_replace("-", "_", $variables['element']['#id']);
         $suggestions[] = $hook . '__' . $id;
@@ -172,7 +172,7 @@ function suggestions_theme_suggestions_block_alter(array &$suggestions, array $v
     $element = $variables['elements'];
     if (!empty($element['content']['#block_content'])) {
         $block_bundle = $element['content']['#block_content']->bundle();
-        $suggestions[] = $hook. '__' . $block_bundle;
+        $suggestions[] = $hook . '__' . $block_bundle;
     }
 }
 
@@ -251,5 +251,75 @@ function suggestions_theme_suggestions_paragraph_alter(array &$suggestions, arra
     $node = \Drupal::routeMatch()->getParameter('node');
     if (!empty($node)) {
         $suggestions[] = $hook . '__' . $paragraph->bundle() . '__' . $node->getType() . '__' . $node->id();
+    }
+}
+
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function suggestions_theme_suggestions_page_alter(array &$suggestions, array &$variables, $hook)
+{
+    if ($node = \Drupal::request()->attributes->get('node')) {
+        array_splice($suggestions, 1, 0, $hook . '__' . $node->getType());
+    }
+}
+
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function suggestions_theme_suggestions_node_alter(array &$suggestions, array &$variables, $hook)
+{
+    if ($node = \Drupal::request()->attributes->get('node')) {
+        array_splice($suggestions, 1, 0, $hook . '__' . $node->getType());
+    }
+}
+
+/**
+ * Implements hook_theme_suggestions_html_alter().
+ */
+function suggestions_theme_suggestions_html_alter(array &$suggestions, array $variables, $hook)
+{
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+        $suggestions[] = $hook . '__' . $node->bundle();
+    }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function suggestions_theme_suggestions_taxonomy_term_alter(&$suggestions, $variables)
+{
+    $elements = $variables['elements'];
+    if (isset($elements['#taxonomy_term']) && isset($elements['#theme']) && isset($elements['#view_mode'])) {
+        $term = $elements['#taxonomy_term'];
+
+        if (is_object($term)) {
+            $suggestions[] = $elements['#theme'] . '__' . $term->getVocabularyId() . '__' . $elements['#view_mode'];
+            $suggestions[] = $elements['#theme'] . '__' . $term->id() . '__' . $elements['#view_mode'];
+        }
+    }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function suggestions_theme_suggestions_field_alter(&$suggestions, $variables, $hook)
+{
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+        $suggestions[] = $hook . '__' . $node->id();
+    }
+}
+
+/**
+ * Implements hook_theme_suggestions_user_alter().
+ */
+function suggestions_theme_suggestions_user_alter(array &$suggestions, array $variables, $hook)
+{
+    if ($view_mode = $variables['elements']['#view_mode']) {
+        $suggestions[] = $hook . '__' . $view_mode;
     }
 }
